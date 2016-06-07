@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{% from "letsencrypt/map.jinja" import letsencrypt with context %}
+{% from "certbot/map.jinja" import certbot with context %}
 
 
 /usr/local/bin/check_letsencrypt_cert.sh:
@@ -25,14 +25,14 @@
 /usr/local/bin/renew_letsencrypt_cert.sh:
   file.managed:
     - template: jinja
-    - source: salt://letsencrypt/files/renew_letsencrypt_cert.sh.jinja
+    - source: salt://certbot/files/renew_letsencrypt_cert.sh.jinja
     - mode: 755
     - require:
       - file: /usr/local/bin/check_letsencrypt_cert.sh
 
 {%
   for setname, domainlist in salt['pillar.get'](
-    'letsencrypt:domainsets'
+    'certbot:domainsets'
   ).iteritems()
 %}
 
@@ -40,23 +40,23 @@ create-initial-cert-{{ setname }}-{{ domainlist | join('+') }}:
   cmd.run:
     - unless: /usr/local/bin/check_letsencrypt_cert.sh {{ domainlist|join(' ') }}
     - name: {{
-          letsencrypt.cli_install_dir
-        }}/letsencrypt-auto -d {{ domainlist|join(' -d ') }} certonly
-    - cwd: {{ letsencrypt.cli_install_dir }}
+          certbot.cli_install_dir
+        }}/certbot-auto -d {{ domainlist|join(' -d ') }} certonly
+    - cwd: {{ certbot.cli_install_dir }}
     - require:
-      - file: letsencrypt-config
+      - file: certbot-config
       - file: /usr/local/bin/check_letsencrypt_cert.sh
 
 # domainlist[0] represents the "CommonName", and the rest
 # represent SubjectAlternativeNames
-letsencrypt-crontab-{{ setname }}-{{ domainlist[0] }}:
+certbot-crontab-{{ setname }}-{{ domainlist[0] }}:
   cron.present:
     - name: /usr/local/bin/renew_letsencrypt_cert.sh {{ domainlist|join(' ') }}
     - month: '*'
     - minute: random
     - hour: random
     - dayweek: '*'
-    - identifier: letsencrypt-{{ setname }}-{{ domainlist[0] }}
+    - identifier: certbot-{{ setname }}-{{ domainlist[0] }}
     - require:
       - cmd: create-initial-cert-{{ setname }}-{{ domainlist | join('+') }}
       - file: /usr/local/bin/renew_letsencrypt_cert.sh
