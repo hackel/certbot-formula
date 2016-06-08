@@ -1,5 +1,5 @@
 #!/bin/bash
-{% from "letsencrypt/map.jinja" import certbot with context %}
+{% from "certbot/map.jinja" import certbot with context %}
 COMMON_NAME="$1"
 
 JOINED=""
