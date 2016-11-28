@@ -2,7 +2,7 @@
 # vim: ft=jinja
 
 {## Start with  defaults from defaults.sls ##}
-{% import_yaml 'letsencrypt/defaults.yaml' as default_settings %}
+{% import_yaml 'certbot/defaults.yaml' as default_settings %}
 
 {##
 Setup variable using grains['os_family'] based logic, only add key:values
@@ -18,17 +18,17 @@ here that differ from whats in defaults.yaml
       'FreeBSD': {},
     },
     grain="os_family",
-    merge=salt['pillar.get']('letsencrypt:lookup')
+    merge=salt['pillar.get']('certbot:lookup')
   )
 %}
 {## Merge the flavor_map to the default settings ##}
-{% do default_settings.letsencrypt.update(os_family_map) %}
+{% do default_settings.certbot.update(os_family_map) %}
 
-{## Merge in letsencrypt:lookup pillar ##}
+{## Merge in certbot:lookup pillar ##}
 {%
-  set letsencrypt = salt['pillar.get'](
-    'letsencrypt',
-    default=default_settings.letsencrypt,
+  set certbot = salt['pillar.get'](
+    'certbot',
+    default=default_settings.certbot,
     merge=True
   )
 %}

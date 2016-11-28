@@ -1,8 +1,8 @@
 ===================
-letsencrypt-formula
+cert-formula
 ===================
 
-Creates certificates and manages renewal using the letsencrypt service.
+Creates certificates and manages renewal using the certbot service.
 
 .. note::
 
@@ -15,24 +15,24 @@ Available states
 .. contents::
     :local:
 
-``letsencrypt``
+``certbot``
 ---------------
 
-Installs and configures the letsencrypt cli from git, creates the requested certificates and installs renewal cron job.
-This is a shortcut for letsencrypt.install letsencrypt.config and letsencrypt.domains .
+Installs and configures the certbot cli from git, creates the requested certificates and installs renewal cron job.
+This is a shortcut for certbot.install certbot.config and certbot.domains .
 
-``letsencrypt.install``
+``certbot.install``
 -----------
 
-Only installs the letsencrypt client. Currently the letsencrypt-auto method is used. This will create a virtualenv in the /root/.config/ directory.
+Only installs the certbot client. Currently the certbot-auto method is used. This will create a virtualenv in the /root/.config/ directory.
 The installation method will be replaced by using packages, as default as soon as they ara stable and available for all major platforms.
 
-``letsencrypt.config``
+``certbot.config``
 ----------
 
-Manages /etc/letsencrypt/cli.ini config file.
+Manages /etc/certbot/cli.ini config file.
 
-``letsencrypt.domains``
+``certbot.domains``
 -----------
-Creates a certificate with the domains in each domain set (letsencrypt:domainsets in pillar). Letsencrypt uses a relatively short validity of 90 days.
+Creates a certificate with the domains in each domain set (certbot:domainsets in pillar). certbot uses a relatively short validity of 90 days.
 Therefore, a cron job for automatic renewal every 60 days is installed for each domain set as well.
